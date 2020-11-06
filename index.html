@@ -152,6 +152,117 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-local-search" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/11/06/local-search/">local search</a>
+    </h1>
+  
+
+        
+        <a href="/2020/11/06/local-search/" class="archive-article-date">
+  	<time datetime="2020-11-06T15:28:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-06</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="局部搜索-local-search"><a href="#局部搜索-local-search" class="headerlink" title="局部搜索 local search"></a>局部搜索 local search</h2><ul>
+<li>不是系统的探索从初始状态开始的路径，考虑对某个或某些状态评价和修改</li>
+<li>适用于关注solution的状态，而不是路径的代价</li>
+<li>algorithm： simulated annealing模拟退火，genetic algorithm遗传</li>
+<li>通常不保留搜索路径</li>
+<li>内存占用小，在系统算法难以解决的大型的甚至无限的问题找到合理解</li>
+<li>状态空间地形图：横轴是状态空间，纵轴是启发式代价函数或目标函数。代价函数：找到最低点。目标函数：找到最高点。</li>
+</ul>
+<h2 id="爬山法-hill-climbing"><a href="#爬山法-hill-climbing" class="headerlink" title="爬山法 hill-climbing"></a>爬山法 hill-climbing</h2><p>以八皇后问题为例。</p>
+<ul>
+<li>local search一般用完整状态形式化 （complete-state formulation），也就是每个状态都在棋盘上放8个皇后，每列一个。</li>
+<li>successor 后继：移动某个皇后到这列的另一个位置，一个状态的后继有56个。</li>
+<li>启发式评估函数$h$是形成相互攻击的皇后对数量，它的全局最小值为0，也就是找到解才会达到这个值。</li>
+<li>如果有多个后继都有最小的$h$值，随机选择一个。</li>
+<li>当遇到局部最大值（较低的山峰、山脊、高原）会卡住。（山肩有可能卡住）</li>
+</ul>
+<p>对爬山法的优化：</p>
+<ul>
+<li>允许侧向移动的爬山法：在不能向上的时候允许侧向移动（有最大次数限制避免在高原死循环），保证了山肩不会卡住。</li>
+<li>随机爬山：上山时随机选择下一步，被选中的概率随着上山陡峭程度变化。</li>
+</ul>
+<p>以上的爬山法都是不完备的，都会在某些情况卡住。</p>
+<p><strong>随机重启爬山法 （random restart hill climbing）</strong></p>
+<ul>
+<li>随机生成初始状态，如果一开始没有成功，重新开始搜索，直到找到目标。</li>
+<li>完备的概率接近1。</li>
+<li>效率依赖于状态空间地形图的形状。</li>
+</ul>
+<h2 id="模拟退火搜索"><a href="#模拟退火搜索" class="headerlink" title="模拟退火搜索"></a>模拟退火搜索</h2><ul>
+<li>退火：为了增加金属或玻璃的韧性硬度而将其加热到高温再冷却的过程。</li>
+<li>如果$T$的下降足够慢，算法找到全局最优解的概率接近1。</li>
+<li>形象的理解：在高低不平的地形上有一颗乒乓球要落到最深的缝隙，以正常的滚动方式，乒乓球会停在一个局部极小值位置，如果允许这个地形平面晃动，乒乓球就有机会离开局部极小值。当然，这种摇晃的程度不能太大，不能使乒乓球从全局最小值点晃出。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">function Simulated-Annealing(problem, schedule) return a solution state</span><br><span class="line">	input: problem, schedule(a map from time to temperature)</span><br><span class="line">	</span><br><span class="line">	current &#x3D; Initialize State</span><br><span class="line">	for t &#x3D; 1 to infinity</span><br><span class="line">		T &#x3D; schedule(t)</span><br><span class="line">		if T &#x3D; 0</span><br><span class="line">			return current</span><br><span class="line">		next &#x3D; a randomly selected successor of current</span><br><span class="line">		if next.Value - current.Value &gt; 0</span><br><span class="line">			current &#x3D; next</span><br><span class="line">		else</span><br><span class="line">			current &#x3D; next with probability</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>接受“变坏”移动的概率：$e^{\Delta E \over T}$，$\Delta E=next.Value-current.Value$，也就是说，变坏的评估值越大，接受的概率越小，温度越接近0，接受的概率越小。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">AI algorithm</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/11/06/local-search/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -318,6 +429,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AI algorithm</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>
